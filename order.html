@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Place Your Order</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: #f2f5f7;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      background: #fff;
+      max-width: 600px;
+      width: 100%;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .container h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #333;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border 0.3s ease;
+    }
+
+    .form-group input:focus {
+      border-color: #4CAF50;
+      outline: none;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    .buttons button {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .cancel-btn {
+      background: #ccc;
+      color: #000;
+    }
+
+    .cancel-btn:hover {
+      background: #bbb;
+    }
+
+    .place-btn {
+      background: #4CAF50;
+      color: white;
+    }
+
+    .place-btn:hover {
+      background: #45a049;
+    }
+
+    @media (max-width: 500px) {
+      .buttons {
+        flex-direction: column;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Place Your Order</h2>
+    <form id="orderForm">
+      <div class="form-group">
+        <label>First Name</label>
+        <input type="text" required id="first">
+      </div>
+      <div class="form-group">
+        <label>Last Name</label>
+        <input type="text" required id="last">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" required placeholder="abc@gmail.com" id="email">
+      </div>
+      <div class="form-group">
+        <label>Phone Number</label>
+        <input type="tel" required id="Phone">
+      </div>
+      <div class="form-group">
+        <label>Street</label>
+        <input type="text" required placeholder="streeks Street" id="Street">
+      </div>
+      <div class="form-group">
+        <label>House No / Apartment</label>
+        <input type="text" required placeholder="1-101" id="House">
+      </div>
+      <div class="form-group">
+        <label>City</label>
+        <input type="text" required placeholder="vijayawada" id="City">
+      </div>
+      <div class="form-group">
+        <label>State</label>
+        <input type="text" required placeholder="Andhra Pradesh" id="State">
+      </div>
+      <div class="form-group">
+        <label>Zip Code</label>
+        <input type="text" required placeholder="000101" id="Zip">
+      </div>
+      <div class="form-group">
+        <label>Country</label>
+        <input type="text" required placeholder="India" id="Country">
+      </div>
+
+      <p style="font-weight: 600; margin-top: 10px;">Note: All orders are Pay on Delivery only.</p>
+
+      <div class="buttons">
+        <button type="button" class="cancel-btn" onclick="window.location.href='index.html'">Cancel Order</button>
+
+        <button type="submit" class="place-btn" id="submit">Place Order</button>
+      </div>
+    </form>
+  </div>
+
+  <script type="module">
+    // Firebase SDK Imports
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
+
+    // Firebase Config (Make sure to include databaseURL)
+    const firebaseConfig = {
+      apiKey: "AIzaSyCH6Pu0IiOlkxsdusJ7FXDnzGryuqu7So0",
+      authDomain: "ecom-d5c30.firebaseapp.com",
+      databaseURL: "https://ecom-d5c30-default-rtdb.firebaseio.com", 
+      projectId: "ecom-d5c30",
+      storageBucket: "ecom-d5c30.appspot.com", 
+      messagingSenderId: "560710010757",
+      appId: "1:560710010757:web:75bd8fe5723f3cccf526ec"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    document.getElementById("orderForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const firstName = document.getElementById("first").value;
+
+      set(ref(db, 'orders/' + firstName), {
+        first: firstName,
+        last: document.getElementById("last").value,
+        email: document.getElementById("email").value,
+        Phone: document.getElementById("Phone").value,
+        Street: document.getElementById("Street").value,
+        House: document.getElementById("House").value,
+        City: document.getElementById("City").value,
+        State: document.getElementById("State").value,
+        Zip: document.getElementById("Zip").value,
+        Country: document.getElementById("Country").value
+      })
+      .then(() => {
+        alert("Order placed successfully!");
+        document.getElementById("orderForm").reset();
+      })
+      .catch((error) => {
+        console.error("Error writing to database: ", error);
+        alert("Error placing order: " + error.message);
+      });
+    });
+  </script>
+
+</body>
+</html>
